@@ -1,0 +1,30 @@
+.partners-wrapper {
+    text-align: center;
+    padding: 2rem 1rem;
+  }
+  
+  .partners-header {
+    margin-bottom: 2rem;
+    color: #0B0A2C;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 6.5px;
+  }
+  
+  .partners-logos {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 2rem;
+    align-items: center;
+    /* animation: scrolltext-marquee 80s linear infinite; */
+    padding-left: 5%;
+    padding-right: 5%;
+  }
+  
+  .partner-logo {
+    max-width: 120px;
+    max-height: 60px;
+    object-fit: contain;
+  }
+  
