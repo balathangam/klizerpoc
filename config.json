@@ -1,6 +1,7 @@
 {
   "public": {
     "default": {
+      "commerce-core-endpoint": "https://na1-sandbox.api.commerce.adobe.com/GMBkaBQSumFG4qaxU86h3L/graphql",
       "commerce-endpoint": "https://na1-sandbox.api.commerce.adobe.com/GMBkaBQSumFG4qaxU86h3L/graphql",
       "headers": {
         "cs": {
@@ -17,7 +18,7 @@
         "environment": "Production",
         "store-id": 1,
         "store-name": "Main Website Store",
-        "store-url": "https://kamlesh--klizerpoc--balathangam.aem.live/",
+        "store-url": "https://kamlesh--klizerpoc--balathangam.aem.page/",
         "store-view-id": 1,
         "store-view-name": "Default Store View",
         "website-id": 1,
