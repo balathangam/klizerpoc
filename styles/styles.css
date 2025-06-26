@@ -524,3 +524,14 @@ main[hidden] {
   }
 }
 
+.shadowtextcontent {
+  color: #211F54;
+  font-size: 40px;
+  font-weight: 400;
+  line-height: 52px;
+  text-shadow: 0px 0px 10px rgba(0,0,0,0.3);
+}
+
+main {
+  background-color: #f5f4ff;
+}

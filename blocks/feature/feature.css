@@ -1,0 +1,39 @@
+.section.feature-container {
+  margin-top: 0px;
+  margin-bottom: 0px;
+}
+
+.featuretext-container {
+  background: #f5f4ff; /* Soft background like in image */
+  padding: 0px 40px;
+  display: flex;
+  /* justify-content: center; */
+}
+
+.featuretext-wrapper {
+  max-width: 960px;
+  text-align:left;
+}
+
+.featuretext-title {
+  color: #0B0A2C;
+  font-size: 50px;
+  font-weight: 700;
+  line-height: 60px;
+  margin-bottom: 24px;
+}
+
+.featuretext-title .title-part-two {
+  color: #4a3aff; /* Bright blue/purple */
+  font-weight: 800;
+}
+
+.featuretext-description {
+  font-family: 'Satoshi', sans-serif;
+  color: #0B0A2C;
+  font-size: 20px;
+  font-weight: 400;
+  line-height: 30px;
+  width: 100%;
+  margin: 0 auto;
+}

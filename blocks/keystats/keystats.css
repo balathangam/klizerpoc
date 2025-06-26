@@ -1,0 +1,33 @@
+.stats-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: stretch;
+    background-color: #5e4eff; /* Adjust based on design */
+    border-radius: 0.5rem;
+    overflow: hidden;
+  }
+  
+  .stat-item {
+    flex: 1;
+    padding: 2rem;
+    text-align: center;
+    background: linear-gradient(to top, #5e4eff, #7f6bff);
+    color: white;
+    position: relative;
+    border-right: 2px dotted #ffffff80; /* vertical dotted line */
+  }
+  
+  .stat-item.no-border {
+    border-right: none;
+  }
+  
+  .stat-value {
+    font-size: 3rem;
+    font-weight: 700;
+  }
+  
+  .stat-label {
+    font-size: 1.25rem;
+    margin-top: 0.5rem;
+  }
+  
