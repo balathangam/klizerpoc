@@ -171,8 +171,9 @@ async function loadCategory(state) {
       // TODO: Remove eventInfo once collector is updated
       dl.push({ event: 'search-request-sent', eventInfo: { ...dl.getState(), searchUnitId } });
     });
-
+    console.log(variables, state?.type, "details")
     const response = await performCatalogServiceQuery(productSearchQuery(state.type === 'category'), variables);
+    console.log(response,"response")
 
     // Parse response into state
     return {
