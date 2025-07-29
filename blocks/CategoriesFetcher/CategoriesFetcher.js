@@ -17,8 +17,9 @@ export default async function decorate(block) {
   try {
     const data = await performCatalogServiceQuery(categoryQuery, {}); // Pass empty vars object
     const categories = data?.categories || [];
-
-    if (categories.length === 0) {
+    const idsToRemove = ['2'];
+    const filteredCategories = categories.filter(category => !idsToRemove.includes(category.id));
+    if (filteredCategories.length === 0) {
       block.innerHTML = '<p>No categories found.</p>';
       return;
     }
@@ -26,7 +27,7 @@ export default async function decorate(block) {
     const ul = document.createElement('ul');
     ul.className = 'category-list';
 
-    categories.forEach((category) => {
+    filteredCategories.forEach((category) => {
       const li = document.createElement('li');
       const a = document.createElement('a');
       // You won’t have `url_path`, so use name as placeholder
