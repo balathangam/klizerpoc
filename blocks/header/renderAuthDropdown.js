@@ -28,7 +28,7 @@ function renderSignIn(element) {
 export function renderAuthDropdown(navTools) {
   const dropdownElement = document.createRange().createContextualFragment(`
  <div class="dropdown-wrapper nav-tools-wrapper">
-    <button type="button" class="nav-dropdown-button nav-dropdown-button-mobile" aria-haspopup="dialog" aria-expanded="false" aria-controls="login-modal"></button>
+ <button type="button" class="nav-dropdown-button nav-dropdown-button-mobile" aria-haspopup="dialog" aria-expanded="false" aria-controls="login-modal"></button>
     <button type="button" class="nav-dropdown-button nav-dropdown-button-desktop" aria-haspopup="dialog" aria-expanded="false" aria-controls="login-modal"></button>
     <div class="nav-auth-menu-panel nav-tools-panel">
       <div id="auth-dropin-container"></div>
@@ -65,25 +65,19 @@ export function renderAuthDropdown(navTools) {
     authDropDownPanel.focus();
   }
 
+  loginButtonDesktop.addEventListener('click', () => toggleDropDownAuthMenu());
   loginButtonMobile.addEventListener('click', () => toggleDropDownAuthMenu());
   document.addEventListener('click', async (e) => {
     const clickOnDropDownPanel = authDropDownPanel.contains(e.target);
-    const clickOnLoginButton = loginButtonMobile.contains(e.target);
-
-    if (!clickOnDropDownPanel && !clickOnLoginButton) {
-      await toggleDropDownAuthMenu(false);
-    }
-  });
-
-  loginButtonDesktop.addEventListener('click', () => toggleDropDownAuthMenu());
-  document.addEventListener('click', async (e) => {
-    const clickOnDropDownPanel = authDropDownPanel.contains(e.target);
     const clickOnLoginButton = loginButtonDesktop.contains(e.target);
+    const clickOnLoginButton2 = loginButtonMobile.contains(e.target);
 
-    if (!clickOnDropDownPanel && !clickOnLoginButton) {
+    if (!clickOnDropDownPanel && !clickOnLoginButton && !clickOnLoginButton2) {
       await toggleDropDownAuthMenu(false);
     }
   });
+
+
 
   logoutButtonElement.addEventListener('click', async () => {
     await authApi.revokeCustomerToken();
