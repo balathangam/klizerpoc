@@ -6,4 +6,5 @@ mountpoints:
 folders:
   /products/: /products/default
   /catalog/: /catalog/default
+  /brand/: /brand/default
   

@@ -24,84 +24,76 @@ const DEFAULT_PARAMS = {
   sortDirection: 'asc',
 };
 
-export const productSearchQuery = (addCategory = false) => `query ProductSearch(
+export const productSearchQuery = () => `query ProductSearch(
   $currentPage: Int = 1
   $pageSize: Int = 20
   $phrase: String = ""
   $sort: [ProductSearchSortInput!] = []
-  $filter: [SearchClauseInput!] = []
-  ${addCategory ? '$categoryId: String!' : ''}
+  $brandId: String!
 ) {
-  ${addCategory ? `categories(ids: [$categoryId]) {
-      name
-      urlKey
-      urlPath
-  }` : ''}
   productSearch(
-      current_page: $currentPage
-      page_size: $pageSize
-      phrase: $phrase
-      sort: $sort
-      filter: $filter
+    current_page: $currentPage
+    page_size: $pageSize
+    phrase: $phrase
+    sort: $sort
+    filter: [
+      {
+        attribute: "brand"
+        eq: $brandId
+      }
+    ]
   ) {
-      facets {
-          title
-          type
-          attribute
-          buckets {
-              title
-              __typename
-              ... on RangeBucket {
-                  count
-                  from
-                  to
+    items {
+      productView {
+        id
+        name
+        sku
+        urlKey
+        images(roles: "thumbnail") {
+          url
+        }
+        __typename
+        ... on SimpleProductView {
+          price {
+            final {
+              amount {
+                currency
+                value
               }
-              ... on ScalarBucket {
-                  count
-                  id
-              }
-              ... on StatsBucket {
-                  max
-                  min
-              }
+            }
           }
-      }
-      items {
-          productView {
-              id
-              name
-              sku
-              urlKey
-              images(roles: "thumbnail") {
-                url
+        }
+        ... on ComplexProductView {
+          priceRange {
+            minimum {
+              final {
+                amount {
+                  currency
+                  value
+                }
               }
-              __typename
-              ... on SimpleProductView {
-                  price {
-                      ...priceFields
-                  }
+            }
+            maximum {
+              final {
+                amount {
+                  currency
+                  value
+                }
               }
-              ... on ComplexProductView {
-                  priceRange {
-                      minimum {
-                          ...priceFields
-                      }
-                      maximum {
-                          ...priceFields
-                      }
-                  }
-              }
+            }
           }
+        }
       }
-      page_info {
-          current_page
-          total_pages
-          page_size
-      }
-      total_count
+    }
+    page_info {
+      current_page
+      total_pages
+      page_size
+    }
+    total_count
   }
 }
-${priceFieldsFragment}`;
+`;
 
 async function loadCategory(state) {
   try {
@@ -172,7 +164,7 @@ async function loadCategory(state) {
       dl.push({ event: 'search-request-sent', eventInfo: { ...dl.getState(), searchUnitId } });
     });
     console.log(variables, state?.type, "details")
-    const response = await performCatalogServiceQuery(productSearchQuery(state.type === 'category'), variables);
+    const response = await performCatalogServiceQuery(productSearchQuery(), variables);
     console.log(response,"response")
 
     // Parse response into state
@@ -612,8 +604,8 @@ export default async function decorate(block) {
 
           // 1. Extract slug after `/category/` regardless of depth
           let urlPath = pathname.replace(/^\/|\/$/g, ''); // remove leading/trailing slashes
-          if (urlPath.startsWith('catalog/')) {
-            urlPath = urlPath.slice('catalog/'.length); // e.g., "test/test"
+          if (urlPath.startsWith('brand/')) {
+            brand = urlPath.slice('brand/'.length); // e.g., "test/test"
           }
 
           // 2. Extract ID from query string (?id=123)
@@ -624,9 +616,8 @@ export default async function decorate(block) {
 
       // Then pass this dynamically to PLP block
       const config = {
-        category: "categoryId",
-        urlpath: urlPath,
-        type: 'category'
+        phrase: "",
+        brandId: brand
       };
 
       block.textContent = '';
