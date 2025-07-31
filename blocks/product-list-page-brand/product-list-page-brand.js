@@ -43,57 +43,64 @@ export const productSearchQuery = () => `query ProductSearch(
       }
     ]
   ) {
-    items {
-      productView {
-        id
-        name
-        sku
-        urlKey
-        images(roles: "thumbnail") {
-          url
-        }
-        __typename
-        ... on SimpleProductView {
-          price {
-            final {
-              amount {
-                currency
-                value
+    facets {
+          title
+          type
+          attribute
+          buckets {
+              title
+              __typename
+              ... on RangeBucket {
+                  count
+                  from
+                  to
               }
-            }
+              ... on ScalarBucket {
+                  count
+                  id
+              }
+              ... on StatsBucket {
+                  max
+                  min
+              }
           }
-        }
-        ... on ComplexProductView {
-          priceRange {
-            minimum {
-              final {
-                amount {
-                  currency
-                  value
-                }
-              }
-            }
-            maximum {
-              final {
-                amount {
-                  currency
-                  value
-                }
-              }
-            }
-          }
-        }
       }
-    }
-    page_info {
-      current_page
-      total_pages
-      page_size
-    }
-    total_count
+      items {
+          productView {
+              id
+              name
+              sku
+              urlKey
+              images(roles: "thumbnail") {
+                url
+              }
+              __typename
+              ... on SimpleProductView {
+                  price {
+                      ...priceFields
+                  }
+              }
+              ... on ComplexProductView {
+                  priceRange {
+                      minimum {
+                          ...priceFields
+                      }
+                      maximum {
+                          ...priceFields
+                      }
+                  }
+              }
+          }
+      }
+      page_info {
+          current_page
+          total_pages
+          page_size
+      }
+      total_count
   }
 }
-`;
+${priceFieldsFragment}`;
 
 async function loadCategory(state) {
   try {
@@ -101,46 +108,51 @@ async function loadCategory(state) {
     const variables = {
       pageSize: state.currentPageSize,
       currentPage: state.currentPage,
-      sort: [{
-        attribute: state.sort,
-        direction: state.sortDirection === 'desc' ? 'DESC' : 'ASC',
-      }],
+      phrase: "",
+      // sort: [{
+      //   attribute: state.sort,
+      //   direction: state.sortDirection === 'desc' ? 'DESC' : 'ASC',
+      // }],
+      brandId: state?.brandId
     };
 
     variables.phrase = state.type === 'search' ? state.searchTerm : '';
 
-    // Always filter for in-stock products
-    variables.filter = [{ attribute: 'inStock', eq: 'true' }];
+    // // Always filter for in-stock products
+    // variables.filter = [{ attribute: 'inStock', eq: 'true' }];
 
-    if (Object.keys(state.filters).length > 0) {
-      Object.keys(state.filters).forEach((key) => {
-        if (key === 'price') {
-          const [from, to] = state.filters[key];
-          if (from && to) {
-            variables.filter.push({ attribute: key, range: { from, to } });
-          }
-        } else if (key === 'categories') {
-          // For categories, use the 'in' operator with category IDs
-          if (state.filters[key] && state.filters[key].length > 0) {
-            variables.filter.push({ attribute: 'categoryIds', in: state.filters[key] });
-          }
-        } else if (state.filters[key].length > 1) {
-          variables.filter.push({ attribute: key, in: state.filters[key] });
-        } else if (state.filters[key].length === 1) {
-          variables.filter.push({ attribute: key, eq: state.filters[key][0] });
-        }
-      });
-    }
-
-    if (state.type === 'category' && state.category.id) {
-      variables.categoryId = state.category.id;
-      variables.filter = variables.filter || [];
-      if (state.category.urlPath) {
-        variables.filter.push({ attribute: 'categoryPath', eq: state.category.urlPath });
-      } else if (state.category.id) {
-        variables.filter.push({ attribute: 'categoryIds', eq: state.category.id });
-      }
-    }
+    // if (Object.keys(state.filters).length > 0) {
+    //   Object.keys(state.filters).forEach((key) => {
+    //     if (key === 'price') {
+    //       const [from, to] = state.filters[key];
+    //       if (from && to) {
+    //         variables.filter.push({ attribute: key, range: { from, to } });
+    //       }
+    //     } else if (key === 'categories') {
+    //       // For categories, use the 'in' operator with category IDs
+    //       if (state.filters[key] && state.filters[key].length > 0) {
+    //         variables.filter.push({ attribute: 'categoryIds', in: state.filters[key] });
+    //       }
+    //     } else if (state.filters[key].length > 1) {
+    //       variables.filter.push({ attribute: key, in: state.filters[key] });
+    //     } else if (state.filters[key].length === 1) {
+    //       variables.filter.push({ attribute: key, eq: state.filters[key][0] });
+    //     }
+    //   });
+    // }
+    // if (state.type === 'category' && state.category.id) {
+    //   variables.categoryId = state.category.id;
+    //   variables.filter = variables.filter || [];
+      
+    //   if (state.category.urlPath) {
+    //     variables.filter.push({ attribute: 'categoryPath', eq: state.category.urlPath });
+    //   } else if (state.category.id) {
+    //     variables.filter.push({ attribute: 'categoryIds', eq: state.category.id });
+    //   }
+    //   if (state.brandId) {
+    //     variables.brandId = brandId
+    //   }
+    // }
 
     window.adobeDataLayer.push((dl) => {
       const requestId = crypto.randomUUID();
@@ -304,6 +316,7 @@ class ProductListPage extends Component {
       type = 'category',
       category,
       urlpath,
+      brandId
     } = props;
     super();
 
@@ -338,6 +351,7 @@ class ProductListPage extends Component {
         id: category || null,
         urlPath: urlpath || null,
       },
+      brandId: brandId,
       sort,
       sortDirection,
       products: {
@@ -604,6 +618,7 @@ export default async function decorate(block) {
 
           // 1. Extract slug after `/category/` regardless of depth
           let urlPath = pathname.replace(/^\/|\/$/g, ''); // remove leading/trailing slashes
+          let brand = ""
           if (urlPath.startsWith('brand/')) {
             brand = urlPath.slice('brand/'.length); // e.g., "test/test"
           }
@@ -621,10 +636,8 @@ export default async function decorate(block) {
       };
 
       block.textContent = '';
-      block.dataset.category = "categoryId";
-      block.dataset.urlpath = urlPath;
-
-      console.log(urlPath,"urlPath")
+      block.dataset.phrase = "";
+      block.dataset.brandId = brand;
 
 
   //custom code end
