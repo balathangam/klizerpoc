@@ -1,0 +1,45 @@
+/*
+ * Full-width Banner CSS for the brand-content block
+ */
+
+/* 1. Target the main content area to remove any top padding/margin */
+main {
+    padding-top: 0;
+    margin-top: 0;
+}
+
+/* 2. Target the section container to remove top and bottom whitespace */
+.brand-content-container {
+    padding-top: 0;
+    padding-bottom: 0;
+}
+
+/* 3. Ensure the brand-content block itself has no extra space */
+.brand-content.block {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    position: relative; /* Useful for positioning text overlays if needed */
+}
+
+/* 4. Make the banner image responsive and full-width */
+.brand-content.block picture,
+.brand-content.block img {
+    width: 100%;
+    height: auto;
+    display: block; /* Removes extra whitespace below the image */
+    object-fit: cover; /* Ensures the image fills the space without distortion */
+    height: 500px;
+}
+
+/* Optional: If you want to make the banner have a specific height on desktop,
+ * you can use a fixed height and object-fit to ensure the image covers the area.
+ * For example, for a fixed banner height of 400px:
+ */
+/*
+@media (min-width: 900px) {
+  .brand-content.block img {
+    height: 400px;
+  }
+}
+*/

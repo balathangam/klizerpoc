@@ -559,7 +559,13 @@ class ProductListPage extends Component {
   }
 
   render(props, state) {
-    const { type = 'category' } = props;
+    const { type = 'Brand' } = props;
+    console.log(state,"actual state")
+    if (!state.productsLoading && state?.products?.items.length === 0) {
+      return html`<${Fragment}>
+      <div class="no-products">No Products for the ${type} right now.</div>
+      </>`
+    }
 
     return html`<${Fragment}>
     <${FacetList}

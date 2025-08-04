@@ -652,3 +652,85 @@ nav .default-content-wrapper {
 }
 
 
+.no-products {
+    background-color: #ffffff; /* Keep white for the main card body for contrast */
+    color: #1F2937; /* Use your header color for the text for a sophisticated look */
+    padding: 40px 60px;
+    border-radius: 12px;
+    /* Enhanced shadows for a more premium, "floating" effect */
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15), /* Deeper, more pronounced shadow */
+                0 5px 10px rgba(0, 0, 0, 0.08);  /* Closer, subtle shadow */
+    text-align: center;
+    max-width: 600px;
+    margin: 0 auto;
+    font-family: 'Segoe UI', 'Roboto', sans-serif; /* Recommend a clean, modern font */
+    animation: fadeInScale 0.7s ease-out; /* Slightly longer animation for smoothness */
+    position: relative;
+    overflow: hidden;
+    /* Add a subtle border in a slightly darker shade for definition */
+    border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+/* Text sizing and emphasis */
+.no-products {
+    font-size: 2.2em; /* Even larger text for more impact */
+    font-weight: 700; /* Bolder text for strong emphasis */
+    line-height: 1.3; /* Tighter line spacing for larger text */
+    letter-spacing: -0.02em; /* Slight negative letter spacing for modern look */
+}
+
+/* Accent bar at the top - using a subtle gradient with your header color */
+.no-products::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 10px; /* Slightly taller accent bar */
+    /* Gradient using your header color and a slightly lighter/darker shade of it */
+    background: linear-gradient(to right, #1F2937, #374759); /* Dark blue/grey gradient */
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+}
+
+/* Icon styling - making it more integrated with your header color */
+.no-products::after {
+    content: '🛒'; /* Keep the shopping cart emoji */
+    font-size: 4em; /* Larger icon */
+    display: block;
+    margin-top: 30px; /* More space between text and icon */
+    color: #6B7280; /* A medium grey from a modern palette for subtle elegance */
+    filter: drop-shadow(0 2px 2px rgba(0,0,0,0.1)); /* Small shadow for icon depth */
+}
+
+/* Animation for a smooth appearance (unchanged) */
+@keyframes fadeInScale {
+    from {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .no-products {
+        padding: 35px 45px;
+        font-size: 1.8em;
+    }
+}
+
+@media (max-width: 480px) {
+    .no-products {
+        padding: 30px 35px;
+        font-size: 1.5em;
+        margin: 15px;
+    }
+    .no-products::after {
+        font-size: 3em; /* Smaller icon on small screens */
+    }
+}
+
