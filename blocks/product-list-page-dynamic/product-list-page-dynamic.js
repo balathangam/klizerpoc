@@ -171,9 +171,7 @@ async function loadCategory(state) {
       // TODO: Remove eventInfo once collector is updated
       dl.push({ event: 'search-request-sent', eventInfo: { ...dl.getState(), searchUnitId } });
     });
-    console.log(variables, state?.type, "details")
     const response = await performCatalogServiceQuery(productSearchQuery(state.type === 'category'), variables);
-    console.log(response,"response")
 
     // Parse response into state
     return {
@@ -555,6 +553,12 @@ class ProductListPage extends Component {
   render(props, state) {
     const { type = 'category' } = props;
 
+      if (!state.productsLoading && state?.products?.items.length === 0) {
+          return html`<${Fragment}>
+          <div class="no-products">No Products for the ${type} right now.</div>
+          </>`
+        }
+
     return html`<${Fragment}>
     <${FacetList}
       facets=${state.facets}
@@ -633,7 +637,6 @@ export default async function decorate(block) {
       block.dataset.category = "categoryId";
       block.dataset.urlpath = urlPath;
 
-      console.log(urlPath,"urlPath")
 
 
   //custom code end
