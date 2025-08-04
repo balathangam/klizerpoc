@@ -234,7 +234,6 @@ async function loadRecommendation(block, context, visibility, filters) {
         dl.push({ recommendationsContext: { units: recommendations.results.map(mapUnit) } });
         dl.push({ event: 'recs-api-response-received', eventInfo: { ...dl.getState() } });
       });
-      console.log(recommendations,"recommendations")
       resolve(recommendations);
     }).catch((error) => {
       console.error('Error fetching recommendations', error);

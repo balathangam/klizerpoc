@@ -169,7 +169,6 @@ function setupSubmenu(navSection) {
 export default async function decorate(block) {
 
    events.on('auth/change', () => {
-    console.log("changed auth")
     updateAuthLinks();
     });
 
@@ -396,11 +395,9 @@ export default async function decorate(block) {
     const href = link.getAttribute('href')?.toLowerCase();
     const li = link.closest('li');
     if (!li) return;
-    console.log(href,"  ")
     if (href?.includes('/customer/login') || href?.includes('/customer/create')) {
       li.style.display = isLoggedIn ? 'none' : '';
     }  else if (href?.includes('/customer/logout')) {
-      console.log("Hie from logout")
         li.style.display = isLoggedIn ? '' : 'none';
         if (isLoggedIn) {
           link.onclick = async (e) => {
@@ -416,7 +413,6 @@ export default async function decorate(block) {
   }
 
      events.on('auth/logout', async () => {
-  console.log('[Dropin] Logout triggered');
   await authApi.revokeCustomerToken();
   events.emit('auth/change');
    setTimeout(() => {

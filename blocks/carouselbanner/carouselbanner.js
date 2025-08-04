@@ -119,5 +119,4 @@ export default async function decorate(block) {
         }, 5000);
     });
 
-    console.log(fetchCategoriesByParentID(2),"catgories")
 }
