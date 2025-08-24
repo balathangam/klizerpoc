@@ -393,25 +393,9 @@ events.on('checkout/initialized', (checkout) => {
     })($billToShipping),
 
     CheckoutProvider.render(ShippingMethods, {
-      displayTitle: true,
+    displayTitle: true,
     hideOnVirtualCart: true,
-    active: !isFreeShippingAvailable,
-  slots: {
-    Methods: (ctx) => {
-      // filter before rendering
-      console.log("fired")
-      const methods = ctx.methods?.filter((m) => m.code === 'freeshipping');
-      const $container = document.createElement('div');
-      
-      methods.forEach((method) => {
-        const item = document.createElement('div');
-        item.innerText = `${method.title} (${method.amount.value} ${method.amount.currency})`;
-        $container.appendChild(item);
-      });
-
-      ctx.replaceHTML($container);
-    },
-  },
+    active: !isFreeShippingAvailable
 })($delivery),
 
 
