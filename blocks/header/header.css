@@ -25,7 +25,7 @@ header .nav-wrapper {
   z-index: 100; /* Increased z-index to ensure it's always on top */
   position: fixed;
   box-shadow: var(--header-shadow-premium);
-  border-bottom: 1px solid var(--header-border-subtle);
+  border-bottom: 5px solid var(--header-border-subtle);
 }
 
 header nav {
