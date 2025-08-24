@@ -264,6 +264,8 @@ export default async function decorate(block) {
   // Add method codes you want to hide
 ];
 
+let isFreeShippingAvailable = false
+
 events.on('checkout/initialized', (checkout) => {
   if (
     checkout?.shippingAddresses?.[0]?.availableShippingMethods &&
@@ -275,11 +277,10 @@ events.on('checkout/initialized', (checkout) => {
 
     // If free shipping exists, keep only that
     if (free) {
-      checkout.shippingAddresses[0].availableShippingMethods = [free];
+      isFreeShippingAvailable = true
     }
   }
-  console.log(checkout,"checkout modified")
-  return checkout;
+  console.log(isFreeShippingAvailable,"checkout modified")
  });
 
  events.on('checkout/updated', (checkout) => {
@@ -392,9 +393,9 @@ events.on('checkout/initialized', (checkout) => {
     })($billToShipping),
 
     CheckoutProvider.render(ShippingMethods, {
-      displayTitle: false,
+      displayTitle: true,
     hideOnVirtualCart: true,
-    active: false,
+    active: !isFreeShippingAvailable,
   slots: {
     Methods: (ctx) => {
       // filter before rendering
