@@ -89,6 +89,8 @@ import '../../scripts/initializers/account.js';
 import '../../scripts/initializers/checkout.js';
 import '../../scripts/initializers/order.js';
 
+// import { overrideGQLOperations } from '@dropins/build-tools/gql-extend.js';
+
 function createMetaTag(property, content, type) {
   if (!property || !type) {
     return;
@@ -227,6 +229,77 @@ export default async function decorate(block) {
   // Adobe Commerce GraphQL endpoint
   const commerceCoreEndpoint = getConfigValue('commerce-core-endpoint');
 
+
+      // overrideGQLOperations([
+      //   {
+      //     npm: '@dropins/storefront-checkout',
+      //     operations: [
+      //       {
+      //         type: 'query',
+      //         name: 'GetCheckout', // or the exact query name shipping methods come from
+      //         transform: (op) => {
+      //           op = {
+      //             ...op,
+      //             // wrap resolver to filter results
+      //             resolve(result) {
+      //               if (result?.checkout?.shippingAddresses?.[0]?.availableShippingMethods) {
+      //                 result.checkout.shippingAddresses[0].availableShippingMethods =
+      //                   result.checkout.shippingAddresses[0].availableShippingMethods.filter(
+      //                     (m) => m.code === 'freeshipping'
+      //                   );
+      //               }
+      //               return result;
+      //             },
+      //           };
+      //           return op;
+      //         },
+      //       },
+      //     ],
+      //   },
+      // ]);
+
+
+  const HIDDEN_SHIPPING_METHODS = [
+  'flatrate',
+  // Add method codes you want to hide
+];
+
+events.on('checkout/initialized', (checkout) => {
+  if (
+    checkout?.shippingAddresses?.[0]?.availableShippingMethods &&
+    checkout.shippingAddresses[0].availableShippingMethods.length > 0
+  ) {
+    const free = checkout.shippingAddresses[0].availableShippingMethods.find(
+      (m) => m.code === 'freeshipping'
+    );
+
+    // If free shipping exists, keep only that
+    if (free) {
+      checkout.shippingAddresses[0].availableShippingMethods = [free];
+    }
+  }
+  console.log(checkout,"checkout modified")
+  return checkout;
+ });
+
+ events.on('checkout/updated', (checkout) => {
+  if (
+    checkout?.shippingAddresses?.[0]?.availableShippingMethods &&
+    checkout.shippingAddresses[0].availableShippingMethods.length > 0
+  ) {
+    const free = checkout.shippingAddresses[0].availableShippingMethods.find(
+      (m) => m.code === 'freeshipping'
+    );
+
+    // If free shipping exists, keep only that
+    if (free) {
+      checkout.shippingAddresses[0].availableShippingMethods = [free];
+    }
+  }
+  console.log(checkout,"checkout modified")
+  return checkout;
+ });
+
   // Render the initial containers
   const [
     _mergedCartBanner,
@@ -319,8 +392,27 @@ export default async function decorate(block) {
     })($billToShipping),
 
     CheckoutProvider.render(ShippingMethods, {
-      hideOnVirtualCart: true,
-    })($delivery),
+      displayTitle: false,
+    hideOnVirtualCart: true,
+    active: false,
+  slots: {
+    Methods: (ctx) => {
+      // filter before rendering
+      console.log("fired")
+      const methods = ctx.methods?.filter((m) => m.code === 'freeshipping');
+      const $container = document.createElement('div');
+      
+      methods.forEach((method) => {
+        const item = document.createElement('div');
+        item.innerText = `${method.title} (${method.amount.value} ${method.amount.currency})`;
+        $container.appendChild(item);
+      });
+
+      ctx.replaceHTML($container);
+    },
+  },
+})($delivery),
+
 
     CheckoutProvider.render(PaymentMethods, {
       slots: {
