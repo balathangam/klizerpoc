@@ -122,3 +122,24 @@
   border: 1px solid #e5e7eb !important;
   border-radius: 12px !important;
 }
+  
+
+.financing-widget {
+  margin-top: 16px;
+  padding: 12px;
+  border: 1px solid #ddd;
+  background: #f8f8f8;
+  border-radius: 6px;
+  font-size: 14px;
+  display: grid;
+  grid-column: 1 / span 4;
+}
+.financing-widget button {
+  margin-top: 8px;
+  padding: 6px 12px;
+  background: #1F2937 ;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}

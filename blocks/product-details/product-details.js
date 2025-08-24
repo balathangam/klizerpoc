@@ -9,6 +9,7 @@ import {
 import { events } from '@dropins/tools/event-bus.js';
 import * as pdpApi from '@dropins/storefront-pdp/api.js';
 import { render as pdpRendered } from '@dropins/storefront-pdp/render.js';
+import injectFinancingWidget from './pdp-custom.js';
 
 // Containers
 import ProductHeader from '@dropins/storefront-pdp/containers/ProductHeader.js';
@@ -50,6 +51,7 @@ export default async function decorate(block) {
           <div class="product-details__buttons">
             <div class="product-details__buttons__add-to-cart"></div>
             <div class="product-details__buttons__add-to-wishlist"></div>
+            <div class="custom-storefront-pdp custom-pay"></div>
           </div>
         </div>
         <div class="product-details__description"></div>
@@ -231,6 +233,9 @@ export default async function decorate(block) {
       setJsonLdProduct(product);
       setMetaTags(product);
       document.title = product.name;
+
+      // 👇 Inject your financing widget here
+      injectFinancingWidget(product);
     }
   }, { eager: true });
 

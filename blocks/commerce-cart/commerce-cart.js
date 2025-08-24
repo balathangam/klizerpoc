@@ -19,6 +19,7 @@ import '../../scripts/initializers/cart.js';
 
 import { readBlockConfig } from '../../scripts/aem.js';
 import { rootLink } from '../../scripts/scripts.js';
+import freeShippingLogic from './freeShippingLogic.js';
 
 export default async function decorate(block) {
   // Configuration
@@ -148,17 +149,20 @@ export default async function decorate(block) {
   let cartViewEventPublished = false;
   // Events
   events.on(
-    'cart/data',
-    (payload) => {
-      toggleEmptyCart(isCartEmpty(payload));
+  'cart/data',
+  (payload) => {
+    toggleEmptyCart(isCartEmpty(payload));
 
-      if (!cartViewEventPublished) {
-        cartViewEventPublished = true;
-        publishShoppingCartViewEvent();
-      }
-    },
-    { eager: true },
-  );
+    if (!cartViewEventPublished) {
+      cartViewEventPublished = true;
+      publishShoppingCartViewEvent();
+    }
+
+    freeShippingLogic(payload);
+  },
+  { eager: true }
+);
+
 
   return Promise.resolve();
 }
