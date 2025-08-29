@@ -1,0 +1,53 @@
+name: Code Quality
+
+on:
+  pull_request:
+    branches: [ main, develop ]
+  push:
+    branches: [ feature/**, bugfix/** ]
+
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: mbstring, intl, json, xml, dom, gd, curl, simplexml, sodium
+          coverage: none
+          tools: composer:v2
+
+      - name: Composer install (with dev)
+        run: composer install --no-interaction --prefer-dist
+
+      - name: Ensure coding standards packages
+        run: |
+          composer require --no-interaction --dev \
+            magento/magento-coding-standard:^25 \
+            squizlabs/php_codesniffer:^3 \
+            phpmd/phpmd:^2 \
+            phpstan/phpstan:^1 || true
+
+      - name: PHPCS (Magento2 standard)
+        run: ./vendor/bin/phpcs --standard=Magento2 --extensions=php,phtml --report=full app/code/Klizer
+
+      - name: PHPStan
+        run: |
+          if [ -f phpstan.neon ]; then
+            ./vendor/bin/phpstan analyse --configuration=phpstan.neon --error-format=table app/code/Klizer
+          else
+            ./vendor/bin/phpstan analyse --level=5 --error-format=table app/code/Klizer
+          fi
+
+      - name: PHPMD
+        run: |
+          if [ -f phpmd.xml ]; then
+            ./vendor/bin/phpmd app/code/Klizer text phpmd.xml
+          else
+            ./vendor/bin/phpmd app/code/Klizer text dev/tests/static/testsuite/Magento/Test/Php/_files/phpmd/ruleset.xml
+          fi
