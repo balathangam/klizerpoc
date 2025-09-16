@@ -72,6 +72,46 @@ export default async function decorate(block) {
   const $addToWishlist = fragment.querySelector('.product-details__buttons__add-to-wishlist');
   const $description = fragment.querySelector('.product-details__description');
   const $attributes = fragment.querySelector('.product-details__attributes');
+  let dynamicPrice =false;
+
+  // Fetch dynamic price from OpenWhisk endpoint
+  async function fetchDynamicPrice(sku) {
+  const resp = await fetch(
+    "https://adobeioruntime.net/api/v1/namespaces/3676633-kiransampleapp-stage/actions/getProductStatusV2?blocking=true&result=true",
+    {
+      method: "POST",
+      headers: {
+        // "Authorization": `Bearer ZDc0MzRlMTUtMjc5Yi00ZmVlLWIzMjktYWU4NmM2MmE3YThlOndQZm5sU0lyNDR2NXJvR3c1UzYyZmhJYTRCcWkyMUxoM3czV2xRRzZtbjRYR3AyMGtMSDVEaDhiQWowRWFVYTE`,
+        "Authorization": `Basic ZDc0MzRlMTUtMjc5Yi00ZmVlLWIzMjktYWU4NmM2MmE3YThlOndQZm5sU0lyNDR2NXJvR3c1UzYyZmhJYTRCcWkyMUxoM3czV2xRRzZtbjRYR3AyMGtMSDVEaDhiQWowRWFVYTE=`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ sku }) // 👈 send SKU in request body
+    }
+  );
+
+  if (!resp.ok) {
+    throw new Error(`Failed to fetch dynamic price: ${resp.status}`);
+  }
+
+  return resp.json();
+}
+
+if(product.sku=="aur-flu-bat-mid-2013" || product.sku=="24-WB03"){
+  dynamicPrice = true
+}
+
+if(dynamicPrice){
+    // Replace ProductPrice rendering
+  const dynamicPriceData = await fetchDynamicPrice(product.sku);
+  console.log(dynamicPriceData,"dynamicPriceData")
+
+  $price.innerHTML = `
+    <div class="dynamic-price pdp-price-range">
+      <strong><span class="dynamic currency dropin-price">$</span>
+      <span class="dynamic dropin-price">${dynamicPriceData.body.price}</span></stromg>
+    </div>
+  `;
+}
 
   block.appendChild(fragment);
 
@@ -120,7 +160,7 @@ export default async function decorate(block) {
     pdpRendered.render(ProductHeader, {})($header),
 
     // Price
-    pdpRendered.render(ProductPrice, {})($price),
+    !dynamicPrice && pdpRendered.render(ProductPrice, {})($price),
 
     // Short Description
     pdpRendered.render(ProductShortDescription, {})($shortDescription),
