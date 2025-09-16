@@ -43,6 +43,7 @@ export default async function decorate(block) {
       <div class="product-details__right-column">
         <div class="product-details__header"></div>
         <div class="product-details__price"></div>
+        <div class="product-details__special_price_note"></div>
         <div class="product-details__gallery"></div>
         <div class="product-details__short-description"></div>
         <div class="product-details__configuration">
@@ -64,6 +65,7 @@ export default async function decorate(block) {
   const $gallery = fragment.querySelector('.product-details__gallery');
   const $header = fragment.querySelector('.product-details__header');
   const $price = fragment.querySelector('.product-details__price');
+  const $special_price_note = fragment.querySelector('.product-details__special_price_note');
   const $galleryMobile = fragment.querySelector('.product-details__right-column .product-details__gallery');
   const $shortDescription = fragment.querySelector('.product-details__short-description');
   const $options = fragment.querySelector('.product-details__options');
@@ -73,6 +75,7 @@ export default async function decorate(block) {
   const $description = fragment.querySelector('.product-details__description');
   const $attributes = fragment.querySelector('.product-details__attributes');
   let dynamicPrice =false;
+  const basicauthtoken= 'ZDc0MzRlMTUtMjc5Yi00ZmVlLWIzMjktYWU4NmM2MmE3YThlOndQZm5sU0lyNDR2NXJvR3c1UzYyZmhJYTRCcWkyMUxoM3czV2xRRzZtbjRYR3AyMGtMSDVEaDhiQWowRWFVYTE='
 
   // Fetch dynamic price from OpenWhisk endpoint
   async function fetchDynamicPrice(sku) {
@@ -81,8 +84,7 @@ export default async function decorate(block) {
     {
       method: "POST",
       headers: {
-        // "Authorization": `Bearer ZDc0MzRlMTUtMjc5Yi00ZmVlLWIzMjktYWU4NmM2MmE3YThlOndQZm5sU0lyNDR2NXJvR3c1UzYyZmhJYTRCcWkyMUxoM3czV2xRRzZtbjRYR3AyMGtMSDVEaDhiQWowRWFVYTE`,
-        "Authorization": `Basic ZDc0MzRlMTUtMjc5Yi00ZmVlLWIzMjktYWU4NmM2MmE3YThlOndQZm5sU0lyNDR2NXJvR3c1UzYyZmhJYTRCcWkyMUxoM3czV2xRRzZtbjRYR3AyMGtMSDVEaDhiQWowRWFVYTE=`,
+        "Authorization": `Basic ${basicauthtoken}`,
         "Content-Type": "application/json",
       },
       body: JSON.stringify({ sku }) // 👈 send SKU in request body
@@ -109,6 +111,11 @@ if(dynamicPrice){
     <div class="dynamic-price pdp-price-range">
       <strong><span class="dynamic currency dropin-price">$</span>
       <span class="dynamic dropin-price">${dynamicPriceData.body.price}</span></stromg>
+    </div>
+  `;
+  $special_price_note.innerHTML = `
+    <div class="dynamic-special-price-note">
+      <p><i>(special price applied)<i></p>
     </div>
   `;
 }
