@@ -30,7 +30,7 @@
     margin-bottom: 0.5rem;
     color: #34495e;
     font-weight: 500;
-    font-size: 0.95rem;
+    font-size: 1.2rem;
 }
 
 .tracking-input {
@@ -45,7 +45,7 @@
 
 .tracking-input:focus {
     outline: none;
-    border-color: #3498db;
+    border-color: #bbc4cf;
     box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
 }
 
@@ -54,13 +54,13 @@
 }
 
 .tracking-submit {
-    width: 100%;
-    background: linear-gradient(135deg, #3498db, #2980b9);
+    width: 25%;
+    background: linear-gradient(135deg, #1F2937, #1F2937);
     color: white;
     border: none;
     padding: 1rem 2rem;
     border-radius: 8px;
-    font-size: 1rem;
+    font-size: 1.5rem;
     font-weight: 600;
     cursor: pointer;
     transition: transform 0.2s ease, box-shadow 0.2s ease;
@@ -215,4 +215,17 @@
     .tracking-title {
         font-size: 1.5rem;
     }
+}
+
+.shipment-tracking-container .default-content-wrapper {
+  color: #1F2937;
+  background-color: transparent;
+  /* width: 100%; */
+}
+
+.shipment-tracking-container .default-content-wrapper p {
+    font-size: 30px;
+    font-weight: 500;
+    margin: 40px 0;
+    text-align: center;
 }

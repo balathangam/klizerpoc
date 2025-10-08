@@ -50,7 +50,7 @@ margin: 0 auto;
 
 .do-we-shipto.block button {
     padding: 12px;
-    background: #201f55;
+    background: #1F2937;
     color: #fff;
     font-weight: 800;
     margin-bottom: 20px;
@@ -58,4 +58,8 @@ margin: 0 auto;
 .do-we-shipto.block p#message {
     margin: 0;
     font-weight: 700;
+}
+.do-we-shipto-container .default-content-wrapper {
+  color: #1F2937;
+  background-color: transparent;
 }
