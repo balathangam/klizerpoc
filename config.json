@@ -2,18 +2,25 @@
   "public": {
     "default": {
       "commerce-core-endpoint": "https://www.aemshop.net/graphql",
-      "commerce-endpoint": "https://www.aemshop.net/cs-graphql",
+      "commerce-graphql-endpoint": "https://www.aemshop.net/cs-graphql",
+      "commerce-endpoint": "https://na1-sandbox.api.commerce.adobe.com/UwaXpL8Cr8AW34nXpBwGZg/graphql",
       "headers": {
         "all": {
           "Store": "default"
         },
-        "cs": {
+        "accs": {
           "Magento-Customer-Group": "b6589fc6ab0dc82cf12099d1c2d40ab994e8410c",
           "Magento-Store-Code": "main_website_store",
           "Magento-Store-View-Code": "default",
           "Magento-Website-Code": "base",
           "x-api-key": "4dfa19c9fe6f4cccade55cc5b3da94f7",
           "Magento-Environment-Id": "f38a0de0-764b-41fa-bd2c-5bc2f3c7b39a"
+        },
+        "cs": {
+          "ac-catalog-view-id": "ce1f1c40-c1ed-4ebd-b2ec-7b9869c8b4ea",
+          "ac-price-book-id": "b2b_shared_catalog",
+          "ac-source-locale": "en-US",
+          "ac-environment-id": "UwaXpL8Cr8AW34nXpBwGZg"
         }
       },
       "analytics": {
