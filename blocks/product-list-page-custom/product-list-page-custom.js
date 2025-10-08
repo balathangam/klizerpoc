@@ -171,7 +171,14 @@ async function loadCategory(state) {
       // TODO: Remove eventInfo once collector is updated
       dl.push({ event: 'search-request-sent', eventInfo: { ...dl.getState(), searchUnitId } });
     });
-    const response = await performCatalogServiceQuery(productSearchQuery(state.type === 'category'), variables);
+
+    if(state.type === 'category'){
+      variables.phrase = "bags",
+      variables.sort = [{ attribute: "relevance", direction: "DESC" }]
+    }
+
+    console.log(variables,"variables")
+    const response = await performCatalogServiceQuery(productSearchQuery(false), variables);
 
     // Parse response into state
     return {

@@ -5,8 +5,9 @@ import htm from '../product-list-page-custom/htm.js';
 import ProductList from '../product-list-page-custom/ProductList.js';
 import FacetList from '../product-list-page-custom/FacetList.js';
 import { readBlockConfig, sampleRUM } from '../../scripts/aem.js';
-import { priceFieldsFragment, performCatalogServiceQuery } from '../../scripts/commerce.js';
+import { priceFieldsFragment, performCoreCatalogServiceQuery } from '../../scripts/commerce.js';
 import { rootLink } from '../../scripts/scripts.js';
+import { fetchSKUsByCategory } from '../../scripts/custom_dropins/commerceBackend/fetchSKUsByCategory.js';
 
 const html = htm.bind(h);
 
@@ -44,64 +45,18 @@ export const productSearchQuery = (addCategory = false) => `query ProductSearch(
       sort: $sort
       filter: $filter
   ) {
-      facets {
-          title
-          type
-          attribute
-          buckets {
-              title
-              __typename
-              ... on RangeBucket {
-                  count
-                  from
-                  to
-              }
-              ... on ScalarBucket {
-                  count
-                  id
-              }
-              ... on StatsBucket {
-                  max
-                  min
-              }
-          }
-      }
       items {
           productView {
               id
               name
               sku
               urlKey
-              images(roles: "thumbnail") {
-                url
-              }
-              __typename
-              ... on SimpleProductView {
-                  price {
-                      ...priceFields
-                  }
-              }
-              ... on ComplexProductView {
-                  priceRange {
-                      minimum {
-                          ...priceFields
-                      }
-                      maximum {
-                          ...priceFields
-                      }
-                  }
-              }
           }
-      }
-      page_info {
-          current_page
-          total_pages
-          page_size
       }
       total_count
   }
 }
-${priceFieldsFragment}`;
+`;
 
 async function loadCategory(state) {
   try {
@@ -171,7 +126,19 @@ async function loadCategory(state) {
       // TODO: Remove eventInfo once collector is updated
       dl.push({ event: 'search-request-sent', eventInfo: { ...dl.getState(), searchUnitId } });
     });
-    const response = await performCatalogServiceQuery(productSearchQuery(state.type === 'category'), variables);
+    
+    const responsev1 = await performCoreCatalogServiceQuery(productSearchQuery(state.type === 'category'), variables);
+    const SKUs = []
+    if(responsev1?.productSearch?.items) {
+      responsev1.productSearch.items.map((product)=>{
+        SKUs.push(product?.productView?.sku)
+    })
+    }
+
+    const response = await fetchSKUsByCategory(SKUs)
+    console.log(response,"response")
+
+    
 
     // Parse response into state
     return {
@@ -553,13 +520,13 @@ class ProductListPage extends Component {
   render(props, state) {
     const { type = 'category' } = props;
 
-      if (!state.productsLoading && state?.products?.items.length === 0) {
-          return html`<${Fragment}>
-          <div class="no-products">No Products for the ${type} right now.</div>
-          </>`
-        }
-
     return html`<${Fragment}>
+    <${FacetList}
+      facets=${state.facets}
+      filters=${state.filters}
+      facetMenuRef=${this.facetMenuRef}
+      onFilterChange=${this.handleFilterChange}
+      loading=${false} />
     <div class="products">
       <div class="title">
         <h1>${state.category.name}</h1>
@@ -631,6 +598,7 @@ export default async function decorate(block) {
       block.dataset.category = "categoryId";
       block.dataset.urlpath = urlPath;
 
+      console.log(urlPath,"urlPath")
 
 
   //custom code end
