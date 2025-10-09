@@ -734,3 +734,240 @@ nav .default-content-wrapper {
     }
 }
 
+
+.technology-overview {
+  color: var(--header-bg-dark);
+}
+
+
+/* ======================================================
+   Adobe Edge Delivery Services – Technology Overview Page
+   Scoped & Professional Styling
+   ====================================================== */
+
+.technology-overview body {
+  font-family: "Inter", "Segoe UI", Roboto, Arial, sans-serif !important;
+  color: #1F2937 !important;
+  background-color: #ffffff !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  line-height: 1.8 !important;
+}
+
+/* Page Container */
+.technology-overview .technology-container,
+.technology-overview .feature-container {
+  max-width: 1200px !important;
+  margin: 0 auto !important;
+  padding: 3rem 2rem !important;
+  box-sizing: border-box !important;
+}
+
+/* =======================
+   Headings
+   ======================= */
+.technology-overview h1,
+.technology-overview h2,
+.technology-overview h3,
+.technology-overview h4 {
+  color: #111827 !important;
+  font-weight: 700 !important;
+  line-height: 1.3 !important;
+  margin-top: 2.5rem !important;
+  margin-bottom: 1rem !important;
+}
+
+.technology-overview h1 {
+  font-size: 2.4rem !important;
+  border-bottom: 4px solid #F59E0B !important;
+  display: inline-block !important;
+  padding-bottom: 0.6rem !important;
+  letter-spacing: -0.5px !important;
+}
+
+.technology-overview h2 {
+  font-size: 1.8rem !important;
+  color: #1F2937 !important;
+  border-left: 4px solid #F59E0B !important;
+  padding-left: 0.75rem !important;
+}
+
+.technology-overview h3 {
+  font-size: 1.35rem !important;
+  color: #374151 !important;
+}
+
+/* =======================
+   Text & Paragraphs
+   ======================= */
+.technology-overview p {
+  font-size: 1.5rem !important;
+  margin-bottom: 1rem !important;
+  color: #1F2937 !important;
+}
+
+.technology-overview .default-content-wrapper p strong {
+  color: #111827 !important;
+  background: none !important;
+  font-weight: 600 !important;
+}
+
+/* =======================
+   Links
+   ======================= */
+.technology-overview a {
+  color: #F59E0B !important;
+  font-weight: 600 !important;
+  text-decoration: none !important;
+  transition: color 0.3s ease !important;
+}
+
+.technology-overview a:hover {
+  color: #d97706 !important;
+  text-decoration: underline !important;
+}
+
+/* =======================
+   Lists
+   ======================= */
+.technology-overview ul,
+.technology-overview ol {
+  margin: 1rem 0 1.5rem 1.5rem !important;
+}
+
+.technology-overview li {
+  margin-bottom: 0.6rem !important;
+  font-size: 1.3rem !important;
+}
+
+/* =======================
+   Technology Cards
+   ======================= */
+.technology-overview .technology-wrapper , .technology-overview  .benefits-wrapper{
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)) !important;
+  gap: 1.8rem !important;
+  margin-top: 2.5rem !important;
+}
+
+.technology-overview .technology-wrapper .block > div , .technology-overview .benefits-wrapper .block > div {
+  background: #f9fafb !important;
+  border: 1px solid #e5e7eb !important;
+  border-radius: 14px !important;
+  padding: 2rem 1.5rem !important;
+  transition: all 0.3s ease !important;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03) !important;
+}
+
+.technology-overview .technology-wrapper .block > div:hover, .technology-overview .benefits-wrapper .block > div:hover {
+  transform: translateY(-6px) !important;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08) !important;
+  background-color: #ffffff !important;
+}
+
+.technology-overview .technology-wrapper p strong, .technology-overview .benefits-wrapper p strong {
+  display: block !important;
+  font-size: 1.5rem !important;
+  color: #111827 !important;
+  margin-bottom: 0.6rem !important;
+}
+
+/* =======================
+   Feature Section
+   ======================= */
+.technology-overview .featuretext-container {
+  text-align: center !important;
+  background: linear-gradient(135deg, #fff7ed, #fffaf0) !important;
+  padding: 3.5rem 2rem !important;
+  border-radius: 20px !important;
+  margin: 4rem 0 !important;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.05) !important;
+}
+
+.technology-overview .featuretext-title {
+  font-size: 2rem !important;
+  color: #1F2937 !important;
+  margin-bottom: 1rem !important;
+  letter-spacing: -0.3px !important;
+}
+
+.technology-overview .featuretext-description {
+  font-size: 1.5rem !important;
+  max-width: 650px !important;
+  margin: 0 auto !important;
+  color: #4b5563 !important;
+}
+
+/* =======================
+   Section Dividers
+   ======================= */
+.technology-overview .section {
+  margin-bottom: 4rem !important;
+  padding-bottom: 3rem !important;
+  border-bottom: 1px solid #e5e7eb !important;
+}
+
+/* =======================
+   Highlight Elements
+   ======================= */
+.technology-overview .default-content-wrapper strong {
+  color: #111827 !important;
+}
+
+.technology-overview .default-content-wrapper em {
+  color: #F59E0B !important;
+  font-style: normal !important;
+}
+
+/* =======================
+   Code / Inline Highlight
+   ======================= */
+.technology-overview code {
+  background-color: #f3f4f6 !important;
+  padding: 0.3rem 0.5rem !important;
+  border-radius: 4px !important;
+  font-family: "Courier New", monospace !important;
+  color: #b45309 !important;
+  font-size: 0.95rem !important;
+}
+
+/* =======================
+   Responsive Design
+   ======================= */
+@media (max-width: 1024px) {
+  .technology-overview h1 { font-size: 2rem !important; }
+  .technology-overview h2 { font-size: 1.5rem !important; }
+}
+
+@media (max-width: 768px) {
+  .technology-overview .technology-wrapper { grid-template-columns: 1fr !important; }
+  .technology-overview .technology-container,
+  .technology-overview .feature-container { padding: 2rem 1rem !important; }
+  .technology-overview .featuretext-container { padding: 2.5rem 1.2rem !important; }
+  .technology-overview h1 { font-size: 1.7rem !important; }
+}
+
+
+/* =======================
+   Subtle Fade-in Animation
+   ======================= */
+.technology-overview .section,
+.technology-overview .technology-wrapper .block > div {
+  animation: fadeInUp 0.6s ease both !important;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.technology-wrapper, .benefits-wrapper {
+  padding: 1px 17.15% !important;
+}
+
