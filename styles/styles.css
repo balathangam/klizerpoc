@@ -800,7 +800,7 @@ nav .default-content-wrapper {
    Text & Paragraphs
    ======================= */
 .technology-overview p {
-  font-size: 1.05rem !important;
+  font-size: 1.5rem !important;
   margin-bottom: 1rem !important;
   color: #1F2937 !important;
 }
@@ -836,7 +836,7 @@ nav .default-content-wrapper {
 
 .technology-overview li {
   margin-bottom: 0.6rem !important;
-  font-size: 1rem !important;
+  font-size: 1.3rem !important;
 }
 
 /* =======================
@@ -866,7 +866,7 @@ nav .default-content-wrapper {
 
 .technology-overview .technology-wrapper p strong, .technology-overview .benefits-wrapper p strong {
   display: block !important;
-  font-size: 1.15rem !important;
+  font-size: 1.5rem !important;
   color: #111827 !important;
   margin-bottom: 0.6rem !important;
 }
@@ -891,7 +891,7 @@ nav .default-content-wrapper {
 }
 
 .technology-overview .featuretext-description {
-  font-size: 1.05rem !important;
+  font-size: 1.5rem !important;
   max-width: 650px !important;
   margin: 0 auto !important;
   color: #4b5563 !important;
