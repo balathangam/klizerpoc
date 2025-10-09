@@ -48,6 +48,7 @@ export default async function decorate(block) {
             // Create pagination dot
             const dot = document.createElement('button');
             dot.classList.add('pagination-dot');
+            dot.title = `Go to slide ${index + 1}`
             if (index === 0) {
                 dot.classList.add('active');
             }
