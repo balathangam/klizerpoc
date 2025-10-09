@@ -548,8 +548,8 @@ main {
 }
 
 .default-content-wrapper {
-  color: #f5f4ff;
-  background-color: #211F54;
+  /* color: #f5f4ff; */
+  /* background-color: #211F54; */
   max-width: 1200px;
   padding: 1px 17.15% !important;
 
@@ -733,7 +733,6 @@ nav .default-content-wrapper {
         font-size: 3em; /* Smaller icon on small screens */
     }
 }
-
 
 .technology-overview {
   color: var(--header-bg-dark);
@@ -970,4 +969,3 @@ nav .default-content-wrapper {
 .technology-wrapper, .benefits-wrapper {
   padding: 1px 17.15% !important;
 }
-
