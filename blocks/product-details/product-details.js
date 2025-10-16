@@ -28,6 +28,7 @@ import { fetchPlaceholders, setJsonLd } from '../../scripts/commerce.js';
 import { IMAGES_SIZES } from '../../scripts/initializers/pdp.js';
 import '../../scripts/initializers/cart.js';
 import { rootLink } from '../../scripts/scripts.js';
+import fetchDynamicPrice from '../../scripts/custom_dropins/appBuilderActions/fetchERpprice.js';
 
 export default async function decorate(block) {
   const product = events.lastPayload('pdp/data') ?? null;
@@ -74,28 +75,6 @@ export default async function decorate(block) {
   const $addToWishlist = fragment.querySelector('.product-details__buttons__add-to-wishlist');
   const $description = fragment.querySelector('.product-details__description');
   const $attributes = fragment.querySelector('.product-details__attributes');
-  const basicauthtoken= 'ZDc0MzRlMTUtMjc5Yi00ZmVlLWIzMjktYWU4NmM2MmE3YThlOndQZm5sU0lyNDR2NXJvR3c1UzYyZmhJYTRCcWkyMUxoM3czV2xRRzZtbjRYR3AyMGtMSDVEaDhiQWowRWFVYTE='
-
-  // Fetch dynamic price from OpenWhisk endpoint
-  async function fetchDynamicPrice(sku) {
-  const resp = await fetch(
-    "https://adobeioruntime.net/api/v1/web/3676633-kiransampleapp-stage/default/FetchERPprice",
-    {
-      method: "POST",
-      headers: {
-        "Authorization": `Basic ${basicauthtoken}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ sku }) // 👈 send SKU in request body
-    }
-  );
-  console.log(resp,"resp")
-  if (!resp.ok) {
-    throw new Error(`Failed to fetch dynamic price: ${resp.status}`);
-  }
-
-  return resp.json();
-}
 
 const dynamicPriceData = await fetchDynamicPrice(product.sku);
 console.log(dynamicPriceData,"dynamicPriceData")

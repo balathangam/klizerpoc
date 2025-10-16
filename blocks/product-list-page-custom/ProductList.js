@@ -7,6 +7,7 @@ import {
   renderPrice,
 } from '../../scripts/commerce.js';
 import { rootLink } from '../../scripts/scripts.js';
+import fetchDynamicPrice from '../../scripts/custom_dropins/appBuilderActions/fetchERpprice.js';
 
 const html = htm.bind(h);
 const searchUnitId = 'livesearch-plp';
@@ -14,12 +15,51 @@ const searchUnitId = 'livesearch-plp';
 class ProductCard extends Component {
   constructor(props) {
     super();
+    this.state = {
+      erpPrice: null,
+      dynamicPrice: false,
+    };
     this.formatter = new Intl.NumberFormat('en-US', {
       style: 'currency',
       currency: 'USD',
     });
 
     this.baseProduct = props.product;
+  }
+
+    async fetchERPPrice() {
+      const { product, loading } = this.props;
+
+      // Skip if product not ready
+      if (loading || !product || !product.sku) return;
+
+      try {
+        const dynamicPriceData = await fetchDynamicPrice(product.sku);
+        if (dynamicPriceData?.dynamicPrice) {
+          this.setState({
+            erpPrice: dynamicPriceData.erpPrice,
+            dynamicPrice: true,
+          });
+        } else {
+          this.setState({
+            erpPrice: null,
+            dynamicPrice: false,
+          });
+        }
+      } catch (err) {
+        console.error("Failed to fetch ERP price:", err);
+      }
+    }
+
+  componentDidMount() {
+    this.fetchERPPrice();
+  }
+
+  componentDidUpdate(prevProps) {
+    // Refetch only if SKU changed
+    if (prevProps.product?.sku !== this.props.product?.sku && !this.props.loading) {
+      this.fetchERPPrice();
+    }
   }
 
   renderImage(loading = 'lazy') {
@@ -87,7 +127,7 @@ class ProductCard extends Component {
         <div class="name">
           <a onClick=${() => this.onProductClick(product)} href="${rootLink(`/products/${product.urlKey}/${product.sku}`)}" dangerouslySetInnerHTML=${{__html: product.name}} />
         </div>
-        <div class="price">${renderPrice(product, this.formatter.format, html, Fragment)}</div>
+        <div class="price">${this.state.dynamicPrice ? html`<span class="price-final">${this.formatter.format(this.state.erpPrice)}</span>` : renderPrice(product, this.formatter.format, html, Fragment)}</div>
       </li>`;
   }
 }
