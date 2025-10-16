@@ -118,7 +118,7 @@ export async function commerceEndpointWithQueryParams() {
 }
 
 export async function commerceCoreEndpointWithQueryParams() {
-  const urlWithQueryParams = new URL(getConfigValue('commerce-graphql-endpoint'));
+  const urlWithQueryParams = new URL(getConfigValue('commerce-endpoint'));
   const headers = getHeaders('accs');
   const shortHash = createHashFromObject(headers);
   urlWithQueryParams.searchParams.append('cb', shortHash);

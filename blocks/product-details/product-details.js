@@ -74,13 +74,12 @@ export default async function decorate(block) {
   const $addToWishlist = fragment.querySelector('.product-details__buttons__add-to-wishlist');
   const $description = fragment.querySelector('.product-details__description');
   const $attributes = fragment.querySelector('.product-details__attributes');
-  let dynamicPrice =false;
   const basicauthtoken= 'ZDc0MzRlMTUtMjc5Yi00ZmVlLWIzMjktYWU4NmM2MmE3YThlOndQZm5sU0lyNDR2NXJvR3c1UzYyZmhJYTRCcWkyMUxoM3czV2xRRzZtbjRYR3AyMGtMSDVEaDhiQWowRWFVYTE='
 
   // Fetch dynamic price from OpenWhisk endpoint
   async function fetchDynamicPrice(sku) {
   const resp = await fetch(
-    "https://adobeioruntime.net/api/v1/namespaces/3676633-kiransampleapp-stage/actions/getProductStatusV2?blocking=true&result=true",
+    "https://adobeioruntime.net/api/v1/web/3676633-kiransampleapp-stage/default/FetchERPprice",
     {
       method: "POST",
       headers: {
@@ -90,7 +89,7 @@ export default async function decorate(block) {
       body: JSON.stringify({ sku }) // 👈 send SKU in request body
     }
   );
-
+  console.log(resp,"resp")
   if (!resp.ok) {
     throw new Error(`Failed to fetch dynamic price: ${resp.status}`);
   }
@@ -98,19 +97,16 @@ export default async function decorate(block) {
   return resp.json();
 }
 
-if(product.sku=="aur-flu-bat-mid-2013" || product.sku=="24-WB03"){
-  dynamicPrice = true
-}
+const dynamicPriceData = await fetchDynamicPrice(product.sku);
+console.log(dynamicPriceData,"dynamicPriceData")
 
-if(dynamicPrice){
+if(dynamicPriceData?.dynamicPrice){
     // Replace ProductPrice rendering
-  const dynamicPriceData = await fetchDynamicPrice(product.sku);
-  console.log(dynamicPriceData,"dynamicPriceData")
 
   $price.innerHTML = `
     <div class="dynamic-price pdp-price-range">
       <strong><span class="dynamic currency dropin-price">$</span>
-      <span class="dynamic dropin-price">${dynamicPriceData.body.price}</span></stromg>
+      <span class="dynamic dropin-price">${dynamicPriceData.erpPrice}</span></strong>
     </div>
   `;
   $special_price_note.innerHTML = `
@@ -167,7 +163,7 @@ if(dynamicPrice){
     pdpRendered.render(ProductHeader, {})($header),
 
     // Price
-    !dynamicPrice && pdpRendered.render(ProductPrice, {})($price),
+    !dynamicPriceData?.dynamicPrice && pdpRendered.render(ProductPrice, {})($price),
 
     // Short Description
     pdpRendered.render(ProductShortDescription, {})($shortDescription),
