@@ -95,6 +95,18 @@ if(dynamicPriceData?.dynamicPrice){
   `;
 }
 
+if (dynamicPriceData?.dynamicPrice && dynamicPriceData?.stock == null) {
+  const $addToCartWrapper = fragment.querySelector('.product-details__buttons__add-to-cart');
+    $addToCartWrapper.innerHTML = `
+        <button role="button"
+          class=" disabled dropin-button dropin-button--medium dropin-button--primary dropin-button--with-icon"
+          disabled
+        >
+          <span>Out Of Stock</span>
+        </button>
+    `;
+}
+
   block.appendChild(fragment);
 
   // Alert
@@ -154,7 +166,7 @@ if(dynamicPriceData?.dynamicPrice){
     pdpRendered.render(ProductQuantity, {})($quantity),
 
     // Configuration – Button - Add to Cart
-    UI.render(Button, {
+    !(dynamicPriceData?.dynamicPrice && dynamicPriceData?.stock == null) && UI.render(Button, {
       children: labels.PDP?.Product?.AddToCart?.label,
       icon: Icon({ source: 'Cart' }),
       onClick: async () => {
