@@ -20,6 +20,31 @@ import '../../scripts/initializers/cart.js';
 import { readBlockConfig } from '../../scripts/aem.js';
 import { rootLink } from '../../scripts/scripts.js';
 import freeShippingLogic from './freeShippingLogic.js';
+import fetchDynamicPrice from '../../scripts/custom_dropins/appBuilderActions/fetchERpprice.js';
+
+// import { updateProductsFromCart } from '@/cart/api/updateProductsFromCart';
+
+import { updateProductsFromCart } from '@dropins/storefront-cart/api.js';
+import showERPMessage from '../../scripts/custom_dropins/uicustoms/showAlerts.js';
+
+// --- ERP Stock API ---
+const basicauthtoken = 'ZDc0MzRlMTUtMjc5Yi00ZmVlLWIzMjktYWU4NmM2MmE3YThlOndQZm5sU0lyNDR2NXJvR3c1UzYyZmhJYTRCcWkyMUxoM3czV2xRRzZtbjRYR3AyMGtMSDVEaDhiQWowRWFVYTE=';
+
+async function fetchERPStock(sku) {
+  const resp = await fetch(
+    'https://adobeioruntime.net/api/v1/web/3676633-kiransampleapp-stage/default/FetchERPprice',
+    {
+      method: 'POST',
+      headers: {
+        Authorization: `Basic ${basicauthtoken}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ sku }),
+    }
+  );
+  if (!resp.ok) throw new Error(`ERP API error for SKU ${sku}: ${resp.status}`);
+  return resp.json();
+}
 
 export default async function decorate(block) {
   // Configuration
@@ -35,7 +60,6 @@ export default async function decorate(block) {
   } = readBlockConfig(block);
 
   const cart = Cart.getCartDataFromCache();
-
   const isEmptyCart = isCartEmpty(cart);
 
   // Layout
@@ -51,6 +75,13 @@ export default async function decorate(block) {
     </div>
 
     <div class="cart__empty-cart"></div>
+
+    <div id="erp-message-popup" class="erp-popup hidden">
+      <div class="erp-popup-content">
+        <p class="erp-popup-message"></p>
+        <button id="erp-ok" class="erp-btn ok">OK</button>
+      </div>
+    </div>
   `);
 
   const $wrapper = fragment.querySelector('.cart__wrapper');
@@ -62,7 +93,6 @@ export default async function decorate(block) {
   block.innerHTML = '';
   block.appendChild(fragment);
 
-  // Toggle Empty Cart
   function toggleEmptyCart(state) {
     if (state) {
       $wrapper.setAttribute('hidden', '');
@@ -77,38 +107,22 @@ export default async function decorate(block) {
 
   // Render Containers
   await Promise.all([
-    // Cart List
     provider.render(CartSummaryList, {
       hideHeading: hideHeading === 'true',
-      routeProduct: (product) => rootLink(`/products/${product.url.urlKey}/${product.topLevelSku}`),
-      routeEmptyCartCTA: startShoppingURL ? () => rootLink(startShoppingURL) : undefined,
+      routeProduct: (product) =>
+        rootLink(`/products/${product.url.urlKey}/${product.topLevelSku}`),
+      routeEmptyCartCTA: startShoppingURL
+        ? () => rootLink(startShoppingURL)
+        : undefined,
       maxItems: parseInt(maxItems, 10) || undefined,
-      attributesToHide: hideAttributes
-        .split(',')
-        .map((attr) => attr.trim().toLowerCase()),
+      attributesToHide: hideAttributes.split(',').map((attr) => attr.trim().toLowerCase()),
       enableUpdateItemQuantity: enableUpdateItemQuantity === 'true',
       enableRemoveItem: enableRemoveItem === 'true',
-      slots: {
-        Footer: (ctx) => {
-          const giftOptions = document.createElement('div');
-
-          provider.render(GiftOptions, {
-            item: ctx.item,
-            view: 'product',
-            dataSource: 'cart',
-            handleItemsLoading: ctx.handleItemsLoading,
-            handleItemsError: ctx.handleItemsError,
-            onItemUpdate: ctx.onItemUpdate,
-          })(giftOptions);
-
-          ctx.appendChild(giftOptions);
-        },
-      },
     })($list),
 
-    // Order Summary
     provider.render(OrderSummary, {
-      routeProduct: (product) => rootLink(`/products/${product.url.urlKey}/${product.topLevelSku}`),
+      routeProduct: (product) =>
+        rootLink(`/products/${product.url.urlKey}/${product.topLevelSku}`),
       routeCheckout: checkoutURL ? () => rootLink(checkoutURL) : undefined,
       slots: {
         EstimateShipping: async (ctx) => {
@@ -120,22 +134,17 @@ export default async function decorate(block) {
         },
         Coupons: (ctx) => {
           const coupons = document.createElement('div');
-
           provider.render(Coupons)(coupons);
-
           ctx.appendChild(coupons);
         },
         GiftCards: (ctx) => {
           const giftCards = document.createElement('div');
-
           provider.render(GiftCards)(giftCards);
-
           ctx.appendChild(giftCards);
         },
       },
     })($summary),
 
-    // Empty Cart
     provider.render(EmptyCart, {
       routeCTA: startShoppingURL ? () => rootLink(startShoppingURL) : undefined,
     })($emptyCart),
@@ -147,22 +156,59 @@ export default async function decorate(block) {
   ]);
 
   let cartViewEventPublished = false;
-  // Events
+
+  // --- ERP Stock Validation on Cart Event ---
   events.on(
-  'cart/data',
-  (payload) => {
-    toggleEmptyCart(isCartEmpty(payload));
+    'cart/data',
+    async (payload) => {
+      toggleEmptyCart(isCartEmpty(payload));
 
-    if (!cartViewEventPublished) {
-      cartViewEventPublished = true;
-      publishShoppingCartViewEvent();
-    }
+      if (!cartViewEventPublished) {
+        cartViewEventPublished = true;
+        publishShoppingCartViewEvent();
+      }
 
-    freeShippingLogic(payload);
-  },
-  { eager: true }
-);
+      freeShippingLogic(payload);
 
+      if (!payload?.items?.length) return;
+
+      // Check each SKU in the cart
+      for (const item of payload.items) {
+        try {
+          const erpData = await fetchDynamicPrice(item.sku);
+
+          if (erpData?.dynamicPrice && (erpData?.stock == 0 || erpData?.stock == null || item?.quantity > erpData?.stock)) {
+            let message1 = (item?.quantity > erpData?.stock && erpData?.stock !== null)
+              ? `The product "${item.name}" has a quantity in your cart (${item.quantity}) exceeding the available stock in ERP (${erpData.stock}).\n\nThe cart quantity will be updated.`
+              : `The product "${item.name}" is Out of Stock in ERP.\n\nThe item will be removed from your cart.`;
+          
+            showERPMessage(message1, () => {
+              try {
+                updateProductsFromCart([
+                  {             
+                    uid: item.uid,
+                    quantity: (item?.quantity > erpData?.stock && erpData?.stock !== null) ? erpData?.stock : 0,
+                  },
+                ]);
+          
+                let message2 = (item?.quantity > erpData?.stock && erpData?.stock !== null)
+                  ? `"${item.name}" has been updated in your cart based on ERP stock.`
+                  : `"${item.name}" has been removed/updated from your cart.`;
+          
+                showERPMessage(message2); // second popup after first is dismissed
+              } catch (err) {
+                console.error('Failed to remove/update item:', err);
+              }
+            });
+          }
+          
+        } catch (err) {
+          console.warn('ERP check failed:', err);
+        }
+      }
+    },
+    { eager: true }
+  );
 
   return Promise.resolve();
 }
